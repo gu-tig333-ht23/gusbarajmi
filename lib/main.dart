@@ -1,10 +1,16 @@
 //main.dart
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'todo_list.dart';
 
 //Runs the app
 void main() {
-  runApp(TodoApp());
+  runApp(
+    ChangeNotifierProvider(
+      create: (context) => TaskProvider(),
+      child: TodoApp(),
+    ),
+  );
 }
 
 class TodoApp extends StatelessWidget {
