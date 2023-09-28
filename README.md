@@ -1,12 +1,6 @@
-# TIG333 - programmering för mobila enheter.
+# todo_app
 
-Det här repot är uppsatt med ett projekt skapat från `flutter create ` som du kommer använda för inlämningsuppgifter.
-
-## Installera Flutter
-
-https://flutter.dev/docs/get-started/install
-
-`Nedan ser du informationen som kommer från "flutter create" projektet.`
+A new Flutter project.
 
 ## Getting Started
 
