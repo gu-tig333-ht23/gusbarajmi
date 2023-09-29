@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'task.dart';
-import 'api_service.dart';
 
+import 'task.dart';
+// Builds a page for new tasks
 class NewTaskPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    // Controller for input
     final _taskController = TextEditingController();
 
     return Scaffold(
@@ -16,6 +16,7 @@ class NewTaskPage extends StatelessWidget {
         padding: EdgeInsets.all(16.0),
         child: Column(
           children: [
+            // Text field with input controller
             TextField(
               controller: _taskController,
               decoration: InputDecoration(
@@ -23,26 +24,17 @@ class NewTaskPage extends StatelessWidget {
               ),
             ),
             SizedBox(height: 20),
+            // Button to add the new task and move back to homepage
             ElevatedButton(
-              onPressed: () async {
+              onPressed: () {
                 String taskTitle = _taskController.text;
                 if (taskTitle.isNotEmpty) {
-                  // Access the API service to add the new task
-                  final apiService =
-                      Provider.of<ApiService>(context, listen: false);
-                  final newTask = Task(
-                    id: '',
-                    title: taskTitle,
-                    done: false,
-                  );
+                  Task newTask = Task(
+                      title: taskTitle,
+                      isCompleted: false); // Create the Task object
+                  // Return the new task to the previous screen (TodoList)
+                  Navigator.pop(context, newTask);
 
-                  try {
-                    await apiService.addTask(apiService.apiKey, newTask);
-                    // Return to the previous screen with the new task object
-                    Navigator.pop(context);
-                  } catch (e) {
-                    print('Error adding task: $e');
-                  }
                 }
               },
               child: Text('Add Task'),

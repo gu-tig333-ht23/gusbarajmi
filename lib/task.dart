@@ -1,37 +1,24 @@
 class Task {
   final String id;
   final String title;
-  final bool done;
-
+  bool isCompleted;
+  // Define constructor according to API requirements
   Task({
-    required this.id,
+    this.id = '',
     required this.title,
-    required this.done,
+    required this.isCompleted,
   });
-
-  Task copyWith({
-    String? id,
-    String? title,
-    bool? done,
-  }) {
-    return Task(
-      id: id ?? this.id,
-      title: title ?? this.title,
-      done: done ?? this.done,
-    );
-  }
-
+  // Converts from json
   factory Task.fromJson(Map<String, dynamic> json) {
     return Task(
-      id: json['id'] ?? '', // Provide a default value or an empty string
+      id: json['id'] ?? '',
       title: json['title'],
-      done: json['done'],
+      isCompleted: json['done'] ?? false,
     );
   }
-
+  // Converts to json
   Map<String, dynamic> toJson() => {
-        'id': id,
         'title': title,
-        'done': done,
+        'done': isCompleted,
       };
 }
