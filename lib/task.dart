@@ -22,3 +22,4 @@ class Task {
         'done': isCompleted,
       };
 }
+
