@@ -1,6 +1,8 @@
-import 'package:flutter/material.dart';
+//new_task.dart
 
+import 'package:flutter/material.dart';
 import 'task.dart';
+
 // Builds a page for new tasks
 class NewTaskPage extends StatelessWidget {
   @override
@@ -20,6 +22,7 @@ class NewTaskPage extends StatelessWidget {
             TextField(
               controller: _taskController,
               decoration: InputDecoration(
+                // Placeholder text
                 hintText: 'Write your task here',
               ),
             ),
@@ -34,7 +37,6 @@ class NewTaskPage extends StatelessWidget {
                       isCompleted: false); // Create the Task object
                   // Return the new task to the previous screen (TodoList)
                   Navigator.pop(context, newTask);
-
                 }
               },
               child: Text('Add Task'),
