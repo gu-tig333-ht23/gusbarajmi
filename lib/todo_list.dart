@@ -91,6 +91,8 @@ class TaskProvider extends ChangeNotifier {
     }
   }
 }
+=======
+
 
 class TodoList extends StatelessWidget {
   String selectedFilter = 'All Tasks';
@@ -100,7 +102,6 @@ class TodoList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final taskProvider = context.watch<TaskProvider>();
-
     // Call fetchTasks to populate the local task list
     taskProvider.fetchTasks();
 
