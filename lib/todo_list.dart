@@ -2,82 +2,74 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'task.dart';
 import 'new_task.dart';
-
-class TaskProvider extends ChangeNotifier {
-  // List to store tasks
-  List<Task> _tasks = [];
-
-  List<Task> get tasks => _tasks;
-  // Add task function
-  void addTask(Task task) {
-    _tasks.add(task);
-    notifyListeners();
-  }
-
-  // Remove task function
-  void removeTask(int index) {
-    _tasks.removeAt(index);
-    notifyListeners();
-  }
-
-  // Update task completion status
-  void updateTaskCompletion(int index, bool isCompleted) {
-    _tasks[index].isCompleted = isCompleted;
-    notifyListeners();
-  }
-}
+import 'api_service.dart';
 
 class TodoList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    // Context.watch to listen to changes
-    final taskProvider = context.watch<TaskProvider>();
+    final apiService = context
+        .read<ApiService>(); // Get the ApiService instance from the context
 
     return Scaffold(
       appBar: AppBar(
         title: Text('Todo App'),
       ),
-      // Build a list of the tasks to display
-      body: ListView.builder(
-        itemCount: taskProvider.tasks.length,
-        // Build an item from current index task
-        itemBuilder: (context, index) {
-          final task = taskProvider.tasks[index];
-          return ListTile(
-            // Checkbox for task completion
-            leading: Checkbox(
-              value: task.isCompleted,
-              // Update task completion status
-              onChanged: (bool? value) {
-                taskProvider.updateTaskCompletion(index, value!);
+      body: FutureBuilder<List<Task>>(
+        // Use FutureBuilder to fetch and display tasks
+        future: apiService
+            .fetchTasks(apiService.apiKey), // Fetch tasks using the API key
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasError) {
+            return Center(child: Text('Error: ${snapshot.error}'));
+          } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+            return Center(child: Text('No tasks available.'));
+          } else {
+            final tasks = snapshot.data!;
+
+            return ListView.builder(
+              itemCount: tasks.length,
+              itemBuilder: (context, index) {
+                final task = tasks[index];
+                return ListTile(
+                  leading: Checkbox(
+                    value: task.done,
+                    onChanged: (bool? value) async {
+                      // Update task completion status using ApiService
+                      final updatedTask = await apiService.updateTask(
+                        apiService.apiKey,
+                        task.copyWith(done: value!),
+                      );
+                      // Replace the task with the updated task in the list
+                      tasks[index] = updatedTask;
+                    },
+                  ),
+                  title: Text(task.title),
+                  trailing: IconButton(
+                    icon: Icon(Icons.delete),
+                    color: Colors.red,
+                    onPressed: () async {
+                      // Delete task using ApiService
+                      await apiService.deleteTask(apiService.apiKey, task.id);
+                      // Remove the task from the list
+                      tasks.removeAt(index);
+                    },
+                  ),
+                );
               },
-            ),
-            // Displays Task Title
-            title: Text(task.title),
-            // Delete button
-            trailing: IconButton(
-              icon: Icon(Icons.delete),
-              color: Colors.red,
-              onPressed: () {
-                taskProvider.removeTask(index);
-              },
-            ),
-          );
+            );
+          }
         },
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
-          // Navigate to NewTaskPage
-          final addedTask = await Navigator.push(
+          await Navigator.push(
             context,
             MaterialPageRoute(
               builder: (context) => NewTaskPage(),
             ),
           );
-          // Add the new task to the list
-          if (addedTask != null) {
-            taskProvider.addTask(addedTask);
-          }
         },
         child: Icon(Icons.add),
       ),
