@@ -1,20 +1,15 @@
 //new_task.dart
 
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:todo_app/todo_list.dart';
 import 'task.dart';
 
+// Builds a page for new tasks
 class NewTaskPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    // Controller for input
     final _taskController = TextEditingController();
-    // Dispose of the controller when the widget is disposed
-    WidgetsBinding.instance.addPostFrameCallback(
-      (_) {
-        _taskController.dispose();
-      },
-    );
+
     return Scaffold(
       appBar: AppBar(
         title: Text('Add Task'),
@@ -32,20 +27,16 @@ class NewTaskPage extends StatelessWidget {
               ),
             ),
             SizedBox(height: 20),
+            // Button to add the new task and move back to homepage
             ElevatedButton(
               onPressed: () {
-                // Save the input to a string (taskTitle)
                 String taskTitle = _taskController.text;
                 if (taskTitle.isNotEmpty) {
-                  // Access the TaskProvider and add the new task
-                  final taskProvider =
-                      Provider.of<TaskProvider>(context, listen: false);
-                  taskProvider.addTask(
-                    Task(taskTitle, false),
-                  );
-                  _taskController.clear();
-                  // Return to the previous screen with the new task object
-                  Navigator.pop(context);
+                  Task newTask = Task(
+                      title: taskTitle,
+                      isCompleted: false); // Create the Task object
+                  // Return the new task to the previous screen (TodoList)
+                  Navigator.pop(context, newTask);
                 }
               },
               child: Text('Add Task'),
