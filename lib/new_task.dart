@@ -1,23 +1,13 @@
-//new_task.dart
-
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'task.dart';
+import 'api_service.dart';
 
-class NewTaskPage extends StatefulWidget {
-  // Take list of tasks from the parent widget
-  final List<Task> tasks;
-  // Constructor that receives the list of tasks
-  NewTaskPage(this.tasks);
-  @override
-  _NewTaskState createState() => _NewTaskState();
-}
-
-class _NewTaskState extends State<NewTaskPage> {
-  // Controller for the text input
-  TextEditingController _taskController = TextEditingController();
-
+class NewTaskPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final _taskController = TextEditingController();
+
     return Scaffold(
       appBar: AppBar(
         title: Text('Add Task'),
@@ -26,25 +16,33 @@ class _NewTaskState extends State<NewTaskPage> {
         padding: EdgeInsets.all(16.0),
         child: Column(
           children: [
-            // Text field with input controller
             TextField(
               controller: _taskController,
               decoration: InputDecoration(
-                // Placeholder text
                 hintText: 'Write your task here',
               ),
             ),
             SizedBox(height: 20),
             ElevatedButton(
-              onPressed: () {
-                // Save the input to a string (taskTitle)
+              onPressed: () async {
                 String taskTitle = _taskController.text;
                 if (taskTitle.isNotEmpty) {
-                  // Create a new task object using the input
-                  Task newTask = Task(taskTitle, false);
-                  _taskController.clear();
-                  // Return to the previous screen with the new task object
-                  Navigator.pop(context, newTask);
+                  // Access the API service to add the new task
+                  final apiService =
+                      Provider.of<ApiService>(context, listen: false);
+                  final newTask = Task(
+                    id: '',
+                    title: taskTitle,
+                    done: false,
+                  );
+
+                  try {
+                    await apiService.addTask(apiService.apiKey, newTask);
+                    // Return to the previous screen with the new task object
+                    Navigator.pop(context);
+                  } catch (e) {
+                    print('Error adding task: $e');
+                  }
                 }
               },
               child: Text('Add Task'),
@@ -53,12 +51,5 @@ class _NewTaskState extends State<NewTaskPage> {
         ),
       ),
     );
-  }
-
-  @override
-  // Dispose of the text input controller
-  void dispose() {
-    _taskController.dispose();
-    super.dispose();
   }
 }
