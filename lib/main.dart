@@ -1,13 +1,22 @@
-//main.dart
+// ignore_for_file: use_key_in_widget_constructors
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'todo_list.dart';
+import 'filter_state.dart';
+import 'task_provider.dart'; // Import the FilterState class
 
-//Runs the app
-void main() {
+void main() async {
+  // Initialize the TaskProvider and fetch tasks immediately
+  final taskProvider = TaskProvider();
+  await taskProvider.fetchTasks();
+
   runApp(
-    ChangeNotifierProvider(
-      create: (context) => TaskProvider(),
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (context) => taskProvider),
+        ChangeNotifierProvider(create: (context) => FilterState()), // Provide FilterState
+      ],
       child: TodoApp(),
     ),
   );
@@ -15,7 +24,6 @@ void main() {
 
 class TodoApp extends StatelessWidget {
   @override
-  // Builds the app with the TodoList widget as the home screen
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Todo App',
