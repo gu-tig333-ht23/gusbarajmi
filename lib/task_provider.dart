@@ -10,9 +10,8 @@ class TaskProvider extends ChangeNotifier {
 
   List<Task> get tasks => _tasks;
 
-  //Function for fetch tasks from the list within the API and refresh the local list
+  //Function for fetching tasks from the list within the API and refresh the local list
   Future<void> fetchTasks() async {
-    // Add this line
     try {
       final response = await http.get(Uri.parse('$_baseUrl/todos?key=$_apiKey'));
       if (response.statusCode == 200) {

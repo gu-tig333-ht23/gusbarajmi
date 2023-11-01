@@ -1,10 +1,8 @@
-// ignore_for_file: use_key_in_widget_constructors
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'todo_list.dart';
 import 'filter_state.dart';
-import 'task_provider.dart'; // Import the FilterState class
+import 'task_provider.dart';
 
 void main() async {
   // Initialize the TaskProvider and fetch tasks immediately
@@ -15,17 +13,19 @@ void main() async {
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (context) => taskProvider),
-        ChangeNotifierProvider(create: (context) => FilterState()), // Provide FilterState
+        ChangeNotifierProvider(create: (context) => FilterState()),
       ],
-      child: TodoApp(),
+      child: const TodoApp(),
     ),
   );
 }
 
 class TodoApp extends StatelessWidget {
+  const TodoApp({super.key});
+
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return const MaterialApp(
       title: 'Todo App',
       home: TodoList(),
     );
